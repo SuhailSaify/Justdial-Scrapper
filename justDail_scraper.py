@@ -14,7 +14,7 @@ import cssutils
 url="https://www.justdial.com/Bangalore/Chisel-Dental-Clinic-Near-Wipro-ParkOpposite-New-Essar-Petrol-Bunk-Koramangala/080PXX80-XX80-090518140658-C9A1_BZDET"
 #url="https://www.justdial.com/Delhi/Kakkar-Auto-Point-Gulab-Bagh-Near-Metro-Pillar-Number-753-Uttam-Nagar/011PXX11-XX11-121122123605-B9M5_BZDET"
 
-
+#download the chrome driver from here "http://chromedriver.chromium.org/downloads" and change the path accordingly
 driver = webdriver.Chrome(executable_path='/usr/lib/chromium-browser/chromedriver')
 driver.get(url)
 
@@ -266,7 +266,7 @@ def getdata(html) :
 
 while 1:
  try:
-   accept.click()  #currently-not-waiting-for-more-reviews-to-load        
+   accept.click()  #currently-not-waiting-for-more-reviews-to-load, in order to get all reviews put a statement here to wait for more review to load        
  except: 
   gethtml()   
   break  
