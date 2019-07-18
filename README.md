@@ -1,6 +1,6 @@
 # Justdial-Scrapper
 
-## A working Justdial scrapper, +updated to scrap phone numbers.
+## A working Justdial scrapper, +updated to scrape phone numbers.
 
 Just assign the url to the "url" variable and it will scrape all info along with all the phone numbers on the business page.
 
