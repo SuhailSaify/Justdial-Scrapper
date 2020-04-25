@@ -237,7 +237,7 @@ def getdata(html,phone_number_final) :
  data['reviews']=review
  return data
 
-def get_data(url):
+def get_data(url,print_response):
   #import sys
   #sys.path.insert(0,'/usr/lib/chromium-browser/chromedriver')
   from selenium import webdriver
@@ -266,8 +266,10 @@ def get_data(url):
     html = wd.page_source
     wd.quit()
     data=getdata(html,phone_no)
-    printdataJSON(data)
+    if(print_response):
+     printdataJSON(data)
     break 
+  return data 
 
   #<!--helper func 
 def printdataJSON(data):
