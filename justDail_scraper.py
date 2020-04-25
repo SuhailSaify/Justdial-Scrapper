@@ -237,7 +237,7 @@ def getdata(html,phone_number_final) :
  data['reviews']=review
  return data
 
-def get_data(url,print_response=False):
+def get_data_from_url(url,print_response=False):
   #import sys
   #sys.path.insert(0,'/usr/lib/chromium-browser/chromedriver')
   from selenium import webdriver
