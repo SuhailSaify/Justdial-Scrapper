@@ -10,7 +10,7 @@ ex_url='https://www.justdial.com/Delhi/Dr-S-K-Mundhra-Opposite-St-Margreet-Schoo
 get_data_from_url(ex_url,print_response=True)
 ```
 
-Log the issues, if any.
+
 
 
 
