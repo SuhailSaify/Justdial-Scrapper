@@ -2,10 +2,13 @@
 
 ## A working Justdial scrapper, +updated to scrape phone numbers.
 
-Just assign the url to the "url" variable and it will scrape all info along with all the phone numbers on the business page.
+```python
+from justDail_scraper import get_data_from_url
 
-The script uses selenium and chrome driver, you can also use something else to get the html source, after retrieving it, just pass
-the html to getData() function.
+ex_url='https://www.justdial.com/Delhi/Dr-S-K-Mundhra-Opposite-St-Margreet-School-Prashant-Vihar/011PXX11-XX11-130130123521-H6P2_BZDET?xid=RGVsaGkgQ2xpbmljcw=='
+
+get_data_from_url(ex_url,print_response=True)
+```
 
 Log the issues, if any.
 
