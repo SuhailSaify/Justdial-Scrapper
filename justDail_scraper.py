@@ -8,69 +8,13 @@ import requests
 import json
 import pprint
 import cssutils
+from selenium import webdriver
 
 
-#url to profile
-url="https://www.justdial.com/Bangalore/Chisel-Dental-Clinic-Near-Wipro-ParkOpposite-New-Essar-Petrol-Bunk-Koramangala/080PXX80-XX80-090518140658-C9A1_BZDET"
-#url="https://www.justdial.com/Delhi/Kakkar-Auto-Point-Gulab-Bagh-Near-Metro-Pillar-Number-753-Uttam-Nagar/011PXX11-XX11-121122123605-B9M5_BZDET"
-
-#download the chrome driver from here "http://chromedriver.chromium.org/downloads" and change the path accordingly
-driver = webdriver.Chrome(executable_path='/usr/lib/chromium-browser/chromedriver')
-driver.get(url)
-
-
-#wait for the page to load -> click on load_more_reviews
-wait = WebDriverWait(driver, 10)
-accept = wait.until(EC.element_to_be_clickable((By.ID, 'rvldr')))
-actions = ActionChains(driver)
- 
-data={}  #main dic to store data 
-
-#<--  get url for rvw page
-def getReviewPageUrl(url)
-    try:
-     return url+'/writereview'
-    except:
-     print('Error : Invalid Url for review')
-
-
-#<!--helper func 
-def printdataJSON(data):
- data=json.dumps(data,indent=4)
- print(data) 
-
-def gethtml():
- html = driver.page_source
- driver.quit()
- getdata(html)
-#--!>
-
-#driver func
-def getdata(html) : 
-
- try:  
-  soup = BeautifulSoup(html,'html.parser') #BeautifulSoup_to_get_data
-  
-  title = soup.find('title')
-  business_name = soup.find('span', attrs = {'class' : 'fn'}).text 
-  rating = soup.find('span', attrs = {'class' : 'value-titles'}).text 
-  review_ele = soup.findAll(class_= 'allratingM')
-  total_rating_count=soup.find('span', attrs = {'class' : 'votes'})
-  long_addr= soup.find('span', attrs = {'id' : 'fulladdress'})
-  long_addr=long_addr.find('span', attrs = {'class' : 'lng_add'}).text
-  category=soup.findAll(class_= 'lng_als_lst')
-  pay_modes = soup.findAll(class_= 'lng_mdpay')
-  also_listed=soup.findAll(class_= 'lng_als_lst')
-  Year=soup.findAll('ul', attrs = {'class' : 'alstdul'})
-  web=soup.findAll('span', attrs = {'class' : 'mreinfp'}) 
- 
-
- #map phone number digits with image id
-  style=soup.findAll('style', attrs = {'type' : 'text/css'})
- 
- except:
-   print("Error : Page fromat changed")
-
+def get_phone_no(html):
+    
+ soup = BeautifulSoup(html,'html.parser') #BeautifulSoup_to_get_data 
+ style=soup.findAll('style', attrs = {'type' : 'text/css'})
  phone_map={} 
  
  sheet = cssutils.parseString(str(style[len(style)-1].text))
@@ -87,14 +31,14 @@ def getdata(html) :
        if(value==15):
         value=9
      
-      phone_map[rule.selectorText]=value 
+    # try:
+     #  phone_map[rule.selectorText]=map_over[(value)] 
+     # except:
+      phone_map[rule.selectorText]=value  
     except:
       print('fail')
- 
- #maping -> complete 
- 
- 
- #extract all the phone no present
+     
+  #extract all the phone no present
  phone_img=soup.findAll('span', attrs = {'class' : 'mobilesv'})
  
  phone_number=""
@@ -132,6 +76,36 @@ def getdata(html) :
         break
   except:
     print("")
+ 
+ return phone_number_final
+  
+
+#driver func
+def getdata(html,phone_number_final) : 
+ data={}
+ try:  
+  soup = BeautifulSoup(html,'html.parser') #BeautifulSoup_to_get_data
+  
+  title = soup.find('title')
+  business_name = soup.find('span', attrs = {'class' : 'fn'}).text 
+  rating = soup.find('span', attrs = {'class' : 'value-titles'}).text 
+  review_ele = soup.findAll(class_= 'allratingM')
+  total_rating_count=soup.find('span', attrs = {'class' : 'votes'})
+  long_addr= soup.find('span', attrs = {'id' : 'fulladdress'})
+  long_addr=long_addr.find('span', attrs = {'class' : 'lng_add'}).text
+  category=soup.findAll(class_= 'lng_als_lst')
+  pay_modes = soup.findAll(class_= 'lng_mdpay')
+  also_listed=soup.findAll(class_= 'lng_als_lst')
+  Year=soup.findAll('ul', attrs = {'class' : 'alstdul'})
+  web=soup.findAll('span', attrs = {'class' : 'mreinfp'}) 
+ 
+
+ #map phone number digits with image id
+ # style=soup.findAll('style', attrs = {'type' : 'text/css'})
+
+ except:
+   print("Error : Page fromat changed")
+
  
  data['phone_number']=phone_number_final
 
@@ -261,16 +235,42 @@ def getdata(html) :
      print('Cannot add record')    
 
  data['reviews']=review
+ return data
 
+def get_data(url):
+  #import sys
+  #sys.path.insert(0,'/usr/lib/chromium-browser/chromedriver')
+  from selenium import webdriver
+  chrome_options = webdriver.ChromeOptions()
+  chrome_options.add_argument('--headless')
+  chrome_options.add_argument('--no-sandbox')
+  chrome_options.add_argument('--disable-dev-shm-usage')
+  userAgent = 'Safari/537.36'
+  #chrome_options.add_argument(f'user-agent={userAgent}')
+  chrome_options.add_argument('user-agent=Safari/537.36')
+  wd = webdriver.Chrome('chromedriver',chrome_options=chrome_options)
+  wd.get(url)
+  phone_no=(get_phone_no(wd.page_source))
+  print(phone_no)
 
+  #wait for the page to load -> click on load_more_reviews
+  wait = WebDriverWait(wd, 10)
+  accept = wait.until(EC.element_to_be_clickable((By.ID, 'rvldr')))
+  actions = ActionChains(wd)
+ 
+  while 1:
+   try:
+    accept.click()  #currently-not-waiting-for-more-reviews-to-load, in order to get all reviews put a statement here to wait for more review to load        
+    wait = WebDriverWait(wd, 10)
+   except: 
+    html = wd.page_source
+    wd.quit()
+    data=getdata(html,phone_no)
+    printdataJSON(data)
+    break 
 
-while 1:
- try:
-   accept.click()  #currently-not-waiting-for-more-reviews-to-load, in order to get all reviews put a statement here to wait for more review to load        
- except: 
-  gethtml()   
-  break  
-
-
-printdataJSON(data)
+  #<!--helper func 
+def printdataJSON(data):
+ data=json.dumps(data,indent=4)
+ print(data) 
 
